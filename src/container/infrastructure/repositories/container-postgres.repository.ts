@@ -5,8 +5,8 @@ import { PostgresDatabase } from "../config/postgres-config";
 
 export class ContainerPostgresRepository implements ContainerRepository {
     private readonly pool: Pool;
-    
-    constructor(){
+
+    constructor() {
         this.pool = PostgresDatabase.getConnection();
     };
 
@@ -40,7 +40,7 @@ export class ContainerPostgresRepository implements ContainerRepository {
 
             await client.query('BEGIN');
             const queryResult = await client.query(query, [container.container_name, container.container_rows, container.container_columns]);
-            await client.query('COMMIT');    
+            await client.query('COMMIT');
 
             return new Container(
                 queryResult.rows[0].id_contai,
@@ -58,7 +58,43 @@ export class ContainerPostgresRepository implements ContainerRepository {
         }
     };
 
-    update(container: Container): Promise<void> {
-        throw new Error("Method not implemented.");
+    async update(container: any): Promise<void> {
+        const client = await this.pool.connect();
+
+        try {
+            await client.query('BEGIN');
+
+            let query = `update frame.tbcontai set `;
+            let params = [];
+
+            if (container.container_name) {
+                query += 'no_contai = $1, ';
+                params.push(container.container_name)
+            };
+
+            if (container.container_rows) {
+                query += 'nu_rowcon = $2, ';
+                params.push(container.container_rows)
+            };
+
+            if (container.container_columns) {
+                query += 'nu_colcon = $3, ';
+                params.push(container.container_columns)
+            };
+
+            query = query.slice(0,-2);
+
+            query += ' where id_contai = $4;';
+            params.push(container.container_id)
+            
+            client.query(query, params);
+
+            await client.query('COMMIT');
+        } catch (error) {
+            console.log(error)
+            throw new Error("error updating");   
+        } finally {
+            client.release();
+        }
     };
 }

@@ -10,8 +10,9 @@ const port = process.env.PORT || 4242;
 
 app.use(express.json())
 
+//Adaptadores
 containerAdpater(app);
 
 app.listen(port,()=>{
-    console.log('servidor corriendo en el puerto '+port);
+    console.log('servidor corriendo en el puerto ' + port);
 });
