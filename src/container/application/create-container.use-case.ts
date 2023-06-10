@@ -12,17 +12,17 @@ interface ContainerDTO  {
 export class CreateContainerUseCase {
     constructor(private containerRepository: ContainerRepository){};
 
-    createContainer = async (containerParams: ContainerDTO) => {
-         const container = new Container(
-            containerParams.container_id,
-            containerParams.container_name,
-            containerParams.container_rows,
-            containerParams.container_columns,
-            containerParams.container_pages
-        );
+    // createContainer = async (containerParams: ContainerDTO) => {
+    //      const container = new Container(
+    //         containerParams.container_id,
+    //         containerParams.container_name,
+    //         containerParams.container_rows,
+    //         containerParams.container_columns,
+    //         containerParams.container_pages
+    //     );
 
-        return await this.containerRepository.create(container);
-    };
+    //     return await this.containerRepository.create(container);
+    // };
 
 
 }

@@ -9,18 +9,18 @@ export class ContainerController {
 
     createContainer = async ({ body }: Request, res: Response) => {
         try {
-            const newContainer = await this.createContainerUseCase.createContainer({
-                container_name: body.container_name,
-                container_rows: body.container_rows,
-                container_columns: body.container_columns,
-                container_pages: body.container_pages
-            });
+            // const newContainer = await this.createContainerUseCase.createContainer({
+            //     container_name: body.container_name,
+            //     container_rows: body.container_rows,
+            //     container_columns: body.container_columns,
+            //     container_pages: body.container_pages
+            // });
 
-            res.status(200).json({
-                status: '00',
-                message: 'ok',
-                container: newContainer
-            })
+            // res.status(200).json({
+            //     status: '00',
+            //     message: 'ok',
+            //     container: newContainer
+            // })
         } catch (error) {
             console.log("error", error)
             res.status(400).json({
@@ -28,49 +28,47 @@ export class ContainerController {
                 message: 'error'
             })
         }
+    }
 
-    };
-
-    findContainer = async (req : Request, res: Response)=>{
+    findContainer = async (req: Request, res: Response) => {
         const idContainer = parseInt(req.params.id);
 
         try {
             const container = await this.findContainerUseCase.findContainer(idContainer);
-            
+
             res.status(200).json({
-                status:'00',
-                message:'ok',
+                status: '00',
+                message: 'ok',
                 container: container
             })
         } catch (error) {
             console.log('error', error)
             res.status(400).json({
-                status:'99',
-                message:'error'
+                status: '99',
+                message: 'error'
             })
-        };  
+        };
     }
 
-    updateContainer = async ({ body }: Request, res: Response)=>{
+    updateContainer = async ({ body }: Request, res: Response) => {
         try {
-            await this.updateContaineruseCase.updateContainer({
-                container_id: body.container_id,
-                container_name: body.container_name,
-                container_rows: body.container_rows,
-                container_columns: body.container_columns
-            })
-            
+            // await this.updateContaineruseCase.updateContainer({
+            //     container_id: body.container_id,
+            //     container_name: body.container_name,
+            //     container_rows: body.container_rows,
+            //     container_columns: body.container_columns
+            // })
+
             res.status(200).json({
-                status:'00',
-                message:'ok'
+                status: '00',
+                message: 'ok'
             })
         } catch (error) {
             res.status(400).json({
-                status:'99',
-                message:'error'
-            })  
+                status: '99',
+                message: 'error'
+            })
         }
-        
-    };
 
+    }
 }

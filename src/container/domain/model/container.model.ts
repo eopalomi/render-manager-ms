@@ -1,21 +1,33 @@
-export class Container {
-    public readonly container_id ?: number | undefined;
-    public readonly container_name: string;
-    public readonly container_rows: number;
-    public readonly container_columns: number;
-    public readonly container_pages ?: object[];
+import { GridContainer } from "./grid-container.model";
+import { Page } from "./pages.model";
 
-    constructor(
-        container_id: number | undefined,
-        container_name: string,
-        container_rows: number,
-        container_columns: number,
-        container_pages: object[] | undefined
-    ) {
-        this.container_id = container_id;
-        this.container_name = container_name;
-        this.container_rows = container_rows;
-        this.container_columns = container_columns;
-        this.container_pages = container_pages;
+export class Container {
+    public readonly id ?: number | undefined;
+    public readonly name: string;
+    public readonly justifyContentValue: string;
+    public readonly gapValue: string;
+    public readonly gridColumnsNumber: string[];
+    public readonly gridRowsNumber: string[];
+    public readonly gridList: any[] | null;
+    public readonly pages : Page[] | null;
+
+    constructor(constructor : {
+        id: number | undefined,
+        name: string,
+        justifyContentValue: string,
+        gapValue: string,
+        gridColumnsNumber: string[],
+        gridRowsNumber: string[],
+        gridList: GridContainer[] | null
+        pages: Page[] | null,
+    }) {
+        this.id = constructor.id;
+        this.name = constructor.name;
+        this.justifyContentValue = constructor.justifyContentValue;
+        this.gapValue = constructor.gapValue;
+        this.gridColumnsNumber = constructor.gridColumnsNumber;
+        this.gridRowsNumber = constructor.gridRowsNumber;
+        this.gridList = constructor.gridList;
+        this.pages = constructor.pages;
     }
 };
