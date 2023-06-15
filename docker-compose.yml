@@ -7,7 +7,7 @@ services:
     build: .
     image: render-manager-ms
     ports:
-      - "52600:5000"
+      - "52600:4000"
     networks:
       - red-externa
 networks:
