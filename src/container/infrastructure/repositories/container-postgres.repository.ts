@@ -18,7 +18,7 @@ export class ContainerPostgresRepository implements ContainerRepository {
       try {
          const queryFindContainer = `select * from frame.tbcontai where id_contai = $1`;
          const queryFindContainerGrid = `select * from frame.tbgridco where id_contai = $1`;
-         const queryFindPages = `select id_pagina, ti_pagina, nu_gridco from frame.tbpagina t where id_conten =  $1`;
+         const queryFindPages = `select id_pagina, ti_pagina, nu_gridco, nu_ordpag, va_widtpa from frame.tbpagina t where id_conten =  $1`;
 
          const {rows: containerResult} = await client.query(queryFindContainer, [container_id]);
 
@@ -39,8 +39,10 @@ export class ContainerPostgresRepository implements ContainerRepository {
          const containerPages = pagesResult.map( page => new Page({
             idPage: page.id_pagina,
             pageType:  page.ti_pagina,
-            numberOfGrid: page.nu_gridco
-         }));
+            numberOfGrid: page.nu_gridco,
+            pageWidth: page.va_widtpa,
+            pageOrder: page.nu_ordpag
+         })).sort((a, b) => a.pageOrder - b.pageOrder);;
 
          return new Container({
             id: containerResult[0].id_contai,
