@@ -6,27 +6,27 @@ export class Container {
     public readonly name: string;
     public readonly justifyContentValue: string;
     public readonly gapValue: string;
-    public readonly gridColumnsNumber: string[];
-    public readonly gridRowsNumber: string[];
-    public readonly gridList: any[] | null;
-    public readonly pages : Page[] | null;
+    public readonly columns: number;
+    public readonly rows: number;
+    public readonly gridList: GridContainer[] | null;
+    public readonly pages ?: Page[] | null;
 
     constructor(constructor : {
-        id: number | undefined,
+        id?: number | undefined,
         name: string,
         justifyContentValue: string,
         gapValue: string,
-        gridColumnsNumber: string[],
-        gridRowsNumber: string[],
+        columns: number,
+        rows: number,
         gridList: GridContainer[] | null
-        pages: Page[] | null,
+        pages?: Page[] | null,
     }) {
         this.id = constructor.id;
         this.name = constructor.name;
         this.justifyContentValue = constructor.justifyContentValue;
         this.gapValue = constructor.gapValue;
-        this.gridColumnsNumber = constructor.gridColumnsNumber;
-        this.gridRowsNumber = constructor.gridRowsNumber;
+        this.columns = constructor.columns;
+        this.rows = constructor.rows;
         this.gridList = constructor.gridList;
         this.pages = constructor.pages;
     }

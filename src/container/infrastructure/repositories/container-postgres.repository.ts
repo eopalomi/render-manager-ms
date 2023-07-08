@@ -49,8 +49,8 @@ export class ContainerPostgresRepository implements ContainerRepository {
             name: containerResult[0].no_contai,
             justifyContentValue: containerResult[0].va_juscon,
             gapValue: containerResult[0].va_grigap,
-            gridColumnsNumber: containerResult[0].va_gricol,
-            gridRowsNumber: containerResult[0].va_grirow,
+            columns: containerResult[0].va_gricol,
+            rows: containerResult[0].va_grirow,
             gridList: gridContainer,
             pages: containerPages
          })
@@ -61,14 +61,42 @@ export class ContainerPostgresRepository implements ContainerRepository {
       }
    };
 
-   async create(container: Container): Promise<void> {
+   async create(container: Partial<Container>): Promise<void> {
       const client = await this.pool.connect();
 
       try {
-         const query = `insert into frame.tbcontai (id_contai, no_contai, nu_rowcon, nu_colcon) values (default, $1, $2, $3) returning *`;
+         const queryReserveID = `select nextval('frame.id_contai')`;
+         const queryInsertContainer = `insert into frame.tbcontai (id_contai, no_contai, va_juscon, va_grigap, va_gricol, va_grirow) values ($1,$2,$3,$4,$5,$6) returning *`;
+         const queryInsertGridContainer = `insert into frame.tbgridco (id_contai, nu_gridco, va_colgri, va_rowgri, va_flexdi, va_juscon, va_aligit, va_gapfle) VALUES($1,$2,$3,$4,$5,$6,$7,$8)`;
 
          await client.query('BEGIN');
-         //const queryResult = await client.query(query, [container.container_name, container.container_rows, container.container_columns]);
+
+         const { rows: [idContainer] } =  await client.query(queryReserveID);
+         const containerColumns = `{ ${ Array(container.columns).fill('auto').join(',')} }`;
+         const containerRows = `{ ${ Array(container.rows).fill('auto').join(',')} }`;
+
+         await client.query(queryInsertContainer, [
+            idContainer.nextval, 
+            container.name, 
+            container.justifyContentValue, 
+            container.gapValue, 
+            containerColumns, 
+            containerRows
+         ]);
+
+         container.gridList?.forEach(async (val, idx)=>
+            await client.query(queryInsertGridContainer,[
+               idContainer.nextval,
+               val.numberOfGrid,
+               val.gridColumn,
+               val.gridRow,
+               val.FlexDirection,
+               val.FlexJustifyContent,
+               val.FlexAlignItems,
+               val.FlexGap
+            ])
+         )
+         
          await client.query('COMMIT');
       } catch (error: any) {
          await client.query('ROLLBACK');
@@ -108,7 +136,7 @@ export class ContainerPostgresRepository implements ContainerRepository {
          query += ' where id_contai = $4;';
          params.push(container.container_id)
 
-         client.query(query, params);
+         await client.query(query, params);
 
          await client.query('COMMIT');
       } catch (error) {

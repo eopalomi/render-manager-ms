@@ -1,6 +1,6 @@
 export class GridContainer {
-    public readonly containerId: number;
-    public readonly numberOfGrid: number;
+    public readonly containerId?: number;
+    public readonly numberOfGrid?: number;
     public readonly gridColumn: string;
     public readonly gridRow: string;
     public readonly FlexDirection: string;
@@ -9,8 +9,8 @@ export class GridContainer {
     public readonly FlexGap: string;
     
      constructor(constructor: {
-        containerId:number,
-        numberOfGrid:number,
+        containerId?:number,
+        numberOfGrid?:number,
         gridColumn:string,
         gridRow:string,
         FlexDirection:string,

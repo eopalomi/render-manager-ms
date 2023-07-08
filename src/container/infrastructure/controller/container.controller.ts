@@ -5,22 +5,28 @@ import { UpdateContainerUseCase } from "../../application/update-container.use-c
 
 export class ContainerController {
 
-    constructor(private createContainerUseCase: CreateContainerUseCase, private findContainerUseCase: FindContainerUseCase, private updateContaineruseCase: UpdateContainerUseCase) { }
+    constructor(
+        private createContainerUseCase: CreateContainerUseCase, 
+        private findContainerUseCase: FindContainerUseCase, 
+        private updateContaineruseCase: UpdateContainerUseCase
+    ) { }
 
     createContainer = async ({ body }: Request, res: Response) => {
         try {
-            // const newContainer = await this.createContainerUseCase.createContainer({
-            //     container_name: body.container_name,
-            //     container_rows: body.container_rows,
-            //     container_columns: body.container_columns,
-            //     container_pages: body.container_pages
-            // });
+            const newContainer = await this.createContainerUseCase.createContainer({
+                name: body.name,
+                justifyContentValue: body.justifyContentValue,
+                gapValue: body.gapValue,
+                columns: body.gridColumns,
+                rows: body.gridRows,
+                gridList: body.gridList
+            });
 
-            // res.status(200).json({
-            //     status: '00',
-            //     message: 'ok',
-            //     container: newContainer
-            // })
+            res.status(200).json({
+                status: '00',
+                message: 'ok',
+                container: newContainer
+            })
         } catch (error) {
             console.log("error", error)
             res.status(400).json({

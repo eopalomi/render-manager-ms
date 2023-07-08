@@ -1,28 +1,40 @@
 import { Container } from "../domain/model/container.model";
+import { GridContainer } from "../domain/model/grid-container.model";
 import { ContainerRepository } from "../domain/repositories/container-repository";
-
-interface ContainerDTO  {
-    container_id?: number,
-    container_name: string,
-    container_rows: number,
-    container_columns: number,
-    container_pages: object[]
-};
 
 export class CreateContainerUseCase {
     constructor(private containerRepository: ContainerRepository){};
 
-    // createContainer = async (containerParams: ContainerDTO) => {
-    //      const container = new Container(
-    //         containerParams.container_id,
-    //         containerParams.container_name,
-    //         containerParams.container_rows,
-    //         containerParams.container_columns,
-    //         containerParams.container_pages
-    //     );
+    createContainer = async (containerParams: Container) => {
+        const { name, justifyContentValue, gapValue, columns, rows, gridList } = containerParams;
+  
+        let transformedTogridList: GridContainer[] | null = null;
 
-    //     return await this.containerRepository.create(container);
-    // };
+        if (gridList && gridList.length > 0){
+            transformedTogridList = gridList.map((grid, index)=>{
+                return new GridContainer({
+                    numberOfGrid: index + 1,
+                    gridColumn: grid.gridColumn,
+                    gridRow: grid.gridRow,
+                    FlexDirection: grid.FlexDirection,
+                    FlexJustifyContent: grid.FlexJustifyContent,
+                    FlexAlignItems: grid.FlexAlignItems,
+                    FlexGap: grid.FlexGap
+                });
+            });
+        };
+
+         const container = new Container({
+            name,
+            justifyContentValue,
+            gapValue,
+            columns,
+            rows,
+            gridList: transformedTogridList
+         });
+
+        return await this.containerRepository.create(container);
+    };
 
 
 }
