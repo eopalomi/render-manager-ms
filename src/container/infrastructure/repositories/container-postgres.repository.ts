@@ -107,36 +107,71 @@ export class ContainerPostgresRepository implements ContainerRepository {
       }
    };
 
-   async update(container: any): Promise<void> {
+   async update(container: Partial<Container>): Promise<void> {
+      const { id, name, justifyContentValue, gapValue, columns, rows, gridList } = container
       const client = await this.pool.connect();
 
       try {
          await client.query('BEGIN');
 
-         let query = `update frame.tbcontai set `;
-         let params = [];
+         /* UPDATE CONTAINER */
+         let queryUpdateContainer = `update frame.tbcontai set `;
+         let paramsUpdateContainer = [];
+         let containerParams: number = 1;
 
-         if (container.container_name) {
-            query += 'no_contai = $1, ';
-            params.push(container.container_name)
-         };
+         const containerSQLProperties = [
+            { name: 'no_contai', value: name},
+            { name: 'va_juscon', value: justifyContentValue},
+            { name: 'va_grigap', value: gapValue},
+            { name: 'va_gricol', value:  `{${Array(container.columns).fill('auto').join(',')}}`},
+            { name: 'va_grirow', value: `{${Array(container.rows).fill('auto').join(',')}}`},
+         ];
 
-         if (container.container_rows) {
-            query += 'nu_rowcon = $2, ';
-            params.push(container.container_rows)
-         };
+         containerSQLProperties.forEach((container)=>{
+            if (container.value){
+               queryUpdateContainer += `${container.name} = $${containerParams}, `;
+               paramsUpdateContainer.push(container.value)
+               containerParams++;
+            }
+         })
 
-         if (container.container_columns) {
-            query += 'nu_colcon = $3, ';
-            params.push(container.container_columns)
-         };
+         queryUpdateContainer = queryUpdateContainer.slice(0, -2);
 
-         query = query.slice(0, -2);
+         queryUpdateContainer += ` where id_contai = $${containerParams}`;
+         paramsUpdateContainer.push(id)
 
-         query += ' where id_contai = $4;';
-         params.push(container.container_id)
+         await client.query(queryUpdateContainer, paramsUpdateContainer);
+         
+         /* UPDATE GRIDS */
+         gridList?.forEach(async (grid)=> {
+            let queryUpdateGrid = `update frame.tbgridco set `;
+            let paramsUpdateGrid: any = [];
+            let paramNumber: number = 1;
+            
+            const gridSQLProperties = [
+               { name: 'va_colgri', value: grid.gridColumn},
+               { name: 'va_rowgri', value: grid.gridRow},
+               { name: 'va_flexdi', value: grid.FlexDirection},
+               { name: 'va_juscon', value: grid.FlexJustifyContent},
+               { name: 'va_aligit', value: grid.FlexAlignItems},
+               { name: 'va_gapfle', value: grid.FlexGap}
+            ];
 
-         await client.query(query, params);
+            gridSQLProperties.forEach((sqlProperties)=>{
+               if (sqlProperties.value){
+                  queryUpdateGrid += `${sqlProperties.name} = $${paramNumber}, `;
+                  paramsUpdateGrid.push(sqlProperties.value)
+                  paramNumber++;
+               }
+            })
+
+            queryUpdateGrid = queryUpdateGrid.slice(0, -2);
+            
+            queryUpdateGrid += ` where id_contai = $${paramNumber} and nu_gridco = $${paramNumber+1};`;
+            paramsUpdateGrid.push(id, grid.numberOfGrid);
+            
+            await client.query(queryUpdateGrid, paramsUpdateGrid)
+         })
 
          await client.query('COMMIT');
       } catch (error) {

@@ -17,8 +17,8 @@ export class ContainerController {
                 name: body.name,
                 justifyContentValue: body.justifyContentValue,
                 gapValue: body.gapValue,
-                columns: body.gridColumns,
-                rows: body.gridRows,
+                columns: body.columns,
+                rows: body.rows,
                 gridList: body.gridList
             });
 
@@ -58,12 +58,15 @@ export class ContainerController {
 
     updateContainer = async ({ body }: Request, res: Response) => {
         try {
-            // await this.updateContaineruseCase.updateContainer({
-            //     container_id: body.container_id,
-            //     container_name: body.container_name,
-            //     container_rows: body.container_rows,
-            //     container_columns: body.container_columns
-            // })
+            await this.updateContaineruseCase.updateContainer({
+                id: body.id,
+                name: body.name,
+                justifyContentValue: body.justifyContentValue,
+                gapValue: body.gapValue,
+                columns: body.columns,
+                rows: body.rows,
+                gridList: body.gridList
+            })
 
             res.status(200).json({
                 status: '00',
