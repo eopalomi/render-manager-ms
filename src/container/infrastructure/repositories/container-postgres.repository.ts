@@ -61,7 +61,7 @@ export class ContainerPostgresRepository implements ContainerRepository {
       }
    };
 
-   async create(container: Partial<Container>): Promise<void> {
+   async create(container: Partial<Container>): Promise<number> {
       const client = await this.pool.connect();
 
       try {
@@ -75,7 +75,7 @@ export class ContainerPostgresRepository implements ContainerRepository {
          const containerColumns = `{ ${ Array(container.columns).fill('auto').join(',')} }`;
          const containerRows = `{ ${ Array(container.rows).fill('auto').join(',')} }`;
 
-         await client.query(queryInsertContainer, [
+         const result = await client.query(queryInsertContainer, [
             idContainer.nextval, 
             container.name, 
             container.justifyContentValue, 
@@ -98,6 +98,8 @@ export class ContainerPostgresRepository implements ContainerRepository {
          )
          
          await client.query('COMMIT');
+
+         return parseInt(result.rows[0].id_contai);
       } catch (error: any) {
          await client.query('ROLLBACK');
          throw new Error(error);
