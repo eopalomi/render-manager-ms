@@ -1,9 +1,9 @@
 import { Pool } from 'pg';
 import { Container } from "../../domain/model/container.model";
 import { ContainerRepository } from "../../domain/repositories/container-repository";
-import { PostgresDatabase } from "../config/postgres-config";
 import { GridContainer } from '../../domain/model/grid-container.model';
 import { Page } from '../../domain/model/pages.model';
+import { PostgresDatabase } from '../../../common/database/postgres-config';
 
 export class ContainerPostgresRepository implements ContainerRepository {
    private readonly pool: Pool;
