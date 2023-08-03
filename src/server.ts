@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv'
 import { containerAdpater } from './container/infrastructure/adapters/container.adapter';
 import { pageRoutes } from './pages/infrastructure/routes/page.routes';
+import { pageRowsRoutes } from './pages/infrastructure/routes/page-row.routes';
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(cors())
 //Adaptadores
 containerAdpater(app);
 pageRoutes(app);
+pageRowsRoutes(app);
 
 app.listen(port,()=>{
     console.log('servidor corriendo en el puerto ' + port);

@@ -1,9 +1,10 @@
 import express from "express";
-import { PagePostgresRepository } from "../repositories/page-postgres.repository";
-import { CreatePageUseCase } from "../../application/create-page.use-case";
+import { PagePostgresRepository } from "../adapters/page.adapter";
+import { CreatePageUseCase } from "../../application/create/create-page.use-case";
 import { PageController } from "../controllers/page.controller";
-import { FindPageUseCase } from "../../application/find-page.use-case";
-import { UpdatePageUseCase } from "../../application/update-page.use-case";
+import { FindPageUseCase } from "../../application/find/find-page.use-case";
+import { UpdatePageUseCase } from "../../application/update/update-page.use-case";
+import { DeletePageUseCase } from "../../application/delete/delete-page.use-case";
 
 
 export const pageRoutes = (app: express.Application) => {
@@ -13,11 +14,13 @@ export const pageRoutes = (app: express.Application) => {
     const pageCreateuseCase = new CreatePageUseCase(pageRepository);
     const pageFindUseCase = new FindPageUseCase(pageRepository);
     const updatePageUseCase = new UpdatePageUseCase(pageRepository);
-    const pageController = new PageController(pageCreateuseCase, pageFindUseCase, updatePageUseCase);
+    const deletePageUseCase = new DeletePageUseCase(pageRepository);
+    const pageController = new PageController(pageCreateuseCase, pageFindUseCase, updatePageUseCase, deletePageUseCase);
 
-    routes.get('/page/:idPage', pageController.findPage);
-    routes.post('/page', pageController.createPage);
-    routes.patch('/page', pageController.updatePage);
+    routes.get('/v1/page/:idPage', pageController.findPage);
+    routes.post('/v1/page', pageController.createPage);
+    routes.patch('/v1/page', pageController.updatePage);
+    routes.delete('/v1/page/:idPage', pageController.deletePage);
 
-    app.use(routes);
+    app.use('/render-manager',routes);
 }

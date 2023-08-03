@@ -1,5 +1,5 @@
-import { Page } from "../domain/models/page.model";
-import { PagePostgresRepository } from "../infrastructure/repositories/page-postgres.repository";
+import { Page } from "../../domain/models/page.model";
+import { PagePostgresRepository } from "../../infrastructure/adapters/page.adapter";
 
 export class UpdatePageUseCase {
     constructor(private pagePostgresRepository: PagePostgresRepository){}

@@ -1,14 +1,16 @@
 import { Request, Response } from "express";
-import { CreatePageUseCase } from "../../application/create-page.use-case";
-import { FindPageUseCase } from "../../application/find-page.use-case";
+import { CreatePageUseCase } from "../../application/create/create-page.use-case";
+import { FindPageUseCase } from "../../application/find/find-page.use-case";
 import { Page } from "../../domain/models/page.model";
-import { UpdatePageUseCase } from "../../application/update-page.use-case";
+import { UpdatePageUseCase } from "../../application/update/update-page.use-case";
+import { DeletePageUseCase } from "../../application/delete/delete-page.use-case";
 
 export class PageController {
     constructor(
         private createPageUseCase: CreatePageUseCase, 
         private findPageUseCase: FindPageUseCase,
-        private updatePageUseCase: UpdatePageUseCase
+        private updatePageUseCase: UpdatePageUseCase,
+        private deletePageUseCase: DeletePageUseCase,
         ){}
 
     findPage = async (req: Request, res: Response) => {
@@ -74,13 +76,14 @@ export class PageController {
                 tableCheck,
                 pageTitle,
                 tableSort,
+                rows: null
             });
 
-            await this.createPageUseCase.createPage(page);
+            const pageID = await this.createPageUseCase.createPage(page);
 
             res.status(200).json({
                 statusCode:'00',
-                data: page
+                pageID
             })
         } catch (error: any) {
             console.log(error);
@@ -117,7 +120,8 @@ export class PageController {
                 devMode,
                 tableCheck,
                 pageTitle,
-                tableSort
+                tableSort,
+                rows
             } = req.body;
 
             const page = new Page({
@@ -142,6 +146,7 @@ export class PageController {
                 tableCheck,
                 pageTitle,
                 tableSort,
+                rows: null
             });
 
             this.updatePageUseCase.updatePage(page);
@@ -161,4 +166,26 @@ export class PageController {
             throw new Error("Error update");
         }
     };
+
+    deletePage = async (req: Request, res: Response) => {
+        try {
+            const {idPage} = req.params;
+
+            this.deletePageUseCase.deletePage(+idPage);
+
+            res.status(200).json({
+                statusCode:'00'
+            })
+        } catch (error) {
+            console.log(error);
+            
+            res.status(400).json({
+                statusCode:'00',
+                error
+            });
+
+            throw new Error("Error delete page");
+        }
+    };
+
 }

@@ -1,4 +1,4 @@
-import { PagePostgresRepository } from "../infrastructure/repositories/page-postgres.repository";
+import { PagePostgresRepository } from "../../infrastructure/adapters/page.adapter";
 
 export class FindPageUseCase {
     constructor(private pagePostgresRepository: PagePostgresRepository){}

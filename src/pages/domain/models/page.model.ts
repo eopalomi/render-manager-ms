@@ -1,3 +1,5 @@
+import { PageRows } from "./page-rows.model";
+
 export class Page {
     public readonly idPage: number;
     public readonly containerId: number;
@@ -20,6 +22,7 @@ export class Page {
     public readonly tableCheck: boolean;
     public readonly pageTitle: boolean;
     public readonly tableSort: boolean;
+    public readonly rows: PageRows | null;
 
     constructor(constructor: {
         idPage: number,
@@ -42,7 +45,8 @@ export class Page {
         devMode: boolean,
         tableCheck: boolean,
         pageTitle: boolean,
-        tableSort: boolean
+        tableSort: boolean,
+        rows: PageRows | null
     }){
         this.idPage = constructor.idPage;
         this.containerId = constructor.containerId;
@@ -65,6 +69,7 @@ export class Page {
         this.tableCheck = constructor.tableCheck;
         this.pageTitle = constructor.pageTitle;
         this.tableSort = constructor.tableSort;
+        this.rows = constructor.rows;
     }
 }
 
