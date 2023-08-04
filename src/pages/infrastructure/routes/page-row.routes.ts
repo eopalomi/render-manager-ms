@@ -22,5 +22,5 @@ export const pageRowsRoutes = (app: express.Application) => {
     routes.patch('/v1/page/rows', pageRowsController.updatePageRow);
     routes.delete('/v1/page/rows/:idPage/:idRow', pageRowsController.deletePageRow);
 
-    app.use('/render-manager',routes);
+    app.use('/render-manager', routes);
 }
