@@ -112,7 +112,7 @@ export class ContainerPostgresRepository implements ContainerRepository {
    async update(container: Partial<Container>): Promise<void> {
       const { id, name, justifyContentValue, gapValue, columns, rows, gridList } = container
       const client = await this.pool.connect();
-
+      console.log("container: ", container)
       try {
          await client.query('BEGIN');
 
@@ -125,8 +125,8 @@ export class ContainerPostgresRepository implements ContainerRepository {
             { name: 'no_contai', value: name},
             { name: 'va_juscon', value: justifyContentValue},
             { name: 'va_grigap', value: gapValue},
-            { name: 'va_gricol', value:  `{${Array(container.columns).fill('auto').join(',')}}`},
-            { name: 'va_grirow', value: `{${Array(container.rows).fill('auto').join(',')}}`},
+            { name: 'va_gricol', value:  `{${Array(+container.columns!).fill('auto').join(',')}}`},
+            { name: 'va_grirow', value: `{${Array(+container.rows!).fill('auto').join(',')}}`},
          ];
 
          containerSQLProperties.forEach((container)=>{
