@@ -112,11 +112,12 @@ export class ContainerPostgresRepository implements ContainerRepository {
    async update(container: Partial<Container>): Promise<void> {
       const { id, name, justifyContentValue, gapValue, columns, rows, gridList } = container
       const client = await this.pool.connect();
-      console.log("container: ", container)
+      
       try {
          await client.query('BEGIN');
 
          /* UPDATE CONTAINER */
+         const queryInsertGridContainer = `insert into frame.tbgridco (id_contai, nu_gridco, va_colgri, va_rowgri, va_flexdi, va_juscon, va_aligit, va_gapfle) VALUES($1,$2,$3,$4,$5,$6,$7,$8)`;
          let queryUpdateContainer = `update frame.tbcontai set `;
          let paramsUpdateContainer = [];
          let containerParams: number = 1;
@@ -168,12 +169,30 @@ export class ContainerPostgresRepository implements ContainerRepository {
             })
 
             queryUpdateGrid = queryUpdateGrid.slice(0, -2);
-            
             queryUpdateGrid += ` where id_contai = $${paramNumber} and nu_gridco = $${paramNumber+1};`;
             paramsUpdateGrid.push(id, grid.numberOfGrid);
             
             await client.query(queryUpdateGrid, paramsUpdateGrid)
          })
+
+         /* INSERT GRIDS */
+         container.gridList?.forEach(async (grid, idx)=>{
+            const querySearchGrids = `select count(*) ca_gridco from frame.tbgridco where id_contai = ${id} and nu_gridco = ${grid.numberOfGrid}`;   
+            const {rows: [existGrid]} = await client.query(querySearchGrids);
+            
+            if (+existGrid.ca_gridco === 0) {
+               await client.query(queryInsertGridContainer,[
+                  id,
+                  grid.numberOfGrid,
+                  grid.gridColumn,
+                  grid.gridRow,
+                  grid.FlexDirection,
+                  grid.FlexJustifyContent,
+                  grid.FlexAlignItems,
+                  grid.FlexGap
+               ])
+            };
+         });
 
          await client.query('COMMIT');
       } catch (error) {
